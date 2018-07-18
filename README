@@ -1,29 +1,23 @@
 Array Statistics Sys-Call
 
-• First, you'll add a new system call that computes some basic statistics on an array
-of data. In practice it makes little sense to have this as a sys-call; however, it
-allows us to become familiar with accessing memory between user and kernel
-space before accessing other kernel data structures.
+• First, you'll add a new system call that computes some basic statistics on an array of data. In practice it makes little sense to have this as a sys-call, but it allows us to become familiar with accessing memory between user and kernel space before accessing other kernel data structures.
 
 • The kernel cannot trust anything it is given by a user-level
-application. Each pointer, for example, could be: a) perfectly fine,
-b) null, c) outside of the user program's memory space, or d)
-pointing to too small an area of memory. Since the kernel can read/
-write to any part of memory, it would be disastrous for the kernel
-to trust a user-level pointer.
+application. A user-level pointer could be in one of the following states.
+a) perfectly fine,
+b) null, 
+c) outside of the user program's memory space, 
+or d)pointing to too small an area of memory. 
+Since the kernel can read and write to any part of memory, it would be disastrous for the kernel to trust a user-level pointer.
 
-• Each read you do using a pointer passed in as input (a user-level
-pointer) should be done via the copy_from_user() macro. This
+• Each read performed on a user-level pointer passed in as input should be done via the copy_from_user() macro. This
 macro safely copies data from a user-level pointer to a kernel-level
-variable: if there's a problem reading or writing the memory, it
-stops and returns non-zero without crashing the kernel.
+variable. If there is a problem reading or writing the memory, the macrio stops and returns non-zero without crashing the kernel.
 
-The array_stats sys-call must:
+The array_stats sys-call must achieve the followings.
 • Set the three fields of the stats structure based on the data array.
-The values in data are signed (positive or negative). Nothing
-special need be done if the sum of all the data overflows/
-underflows a long.
+The values in data are signed (positive or negative). Nothing special need be done if the sum of all the data overflows or underflows a long.
 • Return 0 when successful.
 • Returns -EINVAL if size <= 0.
-• Returns -EFAULT if any problems access stats or data.
+• Returns -EFAULT if any problems access stats or data occur.
 • You must not allocate or use a large amount
